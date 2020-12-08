@@ -10,9 +10,7 @@ Explorations autour de sysmon
 | WiX Toolset build tools | http://wixtoolset.org/releases/                              |
 | Binaires  |  [Fichier ZIP avec les Binaires de WIX v3.11.1](https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip)  |
 | Sysmon v9              | https://docs.microsoft.com/fr-fr/sysinternals/downloads/sysmon |
-|  | Configuration de Sysmon |
 | Sysmon v9               | https://github.com/olafhartong/sysmon-modular                |
-|  | Fourniture pour la documentation |
 
 
 ## Point d'attention
