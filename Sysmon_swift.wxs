@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Name="Sysmon" 
+           Id="*" 
+           UpgradeCode="049183f7-e1ad-4b1c-95a7-fefa6142ab7d"
+           Language="1034"
+           Codepage="1252"
+           Version="13.31.0.0"
+           Manufacturer="Croko">
+    <Package Id="*"
+             Keywords="Installer"
+             Description="Sysinternals - Systeme Activity Monitor"
+             Languages="1034"
+             Compressed="yes"
+             SummaryCodepage="1252"/>
+    <Media Id="1" Cabinet="sysmon.cab" EmbedCab="yes" DiskPrompt="Not Used"/>
+    <Property Id="DiskPrompt" Value="Not Used"/>
+    
+    <MajorUpgrade AllowDowngrades="yes"/>
+      
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="TempFolder" Name="Temp">
+        <Component Id="sysmonEula" Guid="58389911-f2b8-455c-84cb-dbced4580c2a">
+          <File Id="eula" Name="Eula.txt" Source="Eula.txt" KeyPath="yes"/>
+        </Component>
+        <Component Id="Configuration" Guid="dd9b3f75-e072-4dea-8236-4aea02716318">
+          <File Id="config" Name="sysmon_swift.xml" Source="sysmon_swift.xml" KeyPath="yes"/>
+        </Component>
+        <Component Id="SysmonBinary" Guid="fc5b8d42-61a2-4983-b091-552393854272">
+          <File Id="SysmonBinaryFile" Name="Sysmon.exe" Source="Sysmon.exe" KeyPath="yes"/>
+        </Component>
+      </Directory>
+    </Directory>
+
+    <Property Id="SYSMON_EXISTS">
+      <DirectorySearch Id="CheckFileDir" Path="[WindowsFolder]" Depth="0">
+        <FileSearch Id="CheckFile" Name="Sysmon.exe" />
+      </DirectorySearch>
+    </Property>
+	
+    <CustomAction Id="SetPath" Property="SYSMON" Value="[WindowsFolder]\Sysmon.exe"/>
+    <CustomAction Id="RemoveSysmon" Directory="TARGETDIR" ExeCommand='cmd /C "del [SYSMON]"' Impersonate="no" Execute="commit" Return="check"/>
+    <CustomAction Id="StopSysmon" Property="SYSMON" ExeCommand="-u" Impersonate="no" Execute="commit" Return="ignore"/> 
+    
+    <CustomAction Id="UninstallSysmon" Property="SYSMON" ExeCommand="-u" Return="ignore"/> 
+    <CustomAction Id="InstallSysmon" Directory="TARGETDIR" ExeCommand="[TempFolder]\Sysmon.exe -accepteula -i [TempFolder]\sysmon_swift.xml" Execute="commit" Impersonate="no" Return="check"/>
+
+    <InstallExecuteSequence>
+      <Custom Action="SetPath" Before="StopSysmon"></Custom>
+      <Custom Action="StopSysmon" After="InstallInitialize">SYSMON_EXISTS</Custom>
+      <Custom Action="RemoveSysmon" After="StopSysmon">SYSMON_EXISTS</Custom>
+      <Custom Action="InstallSysmon" Before="InstallFinalize">NOT REMOVE</Custom>
+    </InstallExecuteSequence>
+	
+    <Feature Id='Complete' Level='1'>
+      <Feature Id='MainProgram' Level='1'>
+        <ComponentRef Id='sysmonEula' />
+        <ComponentRef Id='Configuration' />  
+        <ComponentRef Id='SysmonBinary' />
+      </Feature>
+    </Feature>
+    
+  </Product>
+</Wix>
