@@ -12,6 +12,7 @@
              Description="Sysinternals - Systeme Activity Monitor"
              Languages="1034"
              Compressed="yes"
+			 InstallerVersion="200"
              SummaryCodepage="1252"/>
     <Media Id="1" Cabinet="sysmon.cab" EmbedCab="yes" DiskPrompt="Not Used"/>
     <Property Id="DiskPrompt" Value="Not Used"/>
