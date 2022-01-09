@@ -49,22 +49,33 @@ if not exist wix311-binaries.zip (
 	break
 )
 
-echo [+] Addind binaries to PATH
-set PATH=%PATH%;%~dp0wix311-binaries\
-
-for /f "tokens=1 delims=." %%a in ('dir /b *.wxs') do (
-	echo [+] Compiling      : %%a.wxs
-	candle %%a.wxs >NUL
-	echo [+] Linking        : %%a.wixobj
-	light %%a.wixobj >NUL
+if exist wix311-binaries (
+	echo [+] Addind binaries to PATH
+	set "PATH=%PATH%;%~dp0wix311-binaries\"
 )
 
+for /f "tokens=1 delims=." %%a in ('dir /b *.wxs') do (
+	if not exist %%a.msi (
+		echo [+] Compiling      : %%a.wxs
+		candle %%a.wxs >NUL
+		echo [+] Linking        : %%a.wixobj
+		light %%a.wixobj >NUL
+	)
+)
+
+:ask 
+set /p "response=Launch cleaning (y/n) ? "
+if %response% equ n goto :EOF
+if %response% equ y goto clean
+goto ask
+
+:clean
 if exist Sysmon64_swift.msi (
 	echo [+] Cleaning files : wix311-binaries
 	del /s /q wix311-binaries >NUL
 	rmdir /s /q wix311-binaries
 	
-	set FilesToDelete=wix311-binaries.zip Eula.txt Sysmon.exe Sysmon64.exe sysmon_modular.xml sysmon_swift.xml
+	set "FilesToDelete=wix311-binaries.zip Eula.txt Sysmon.exe Sysmon64.exe sysmon_modular.xml sysmon_swift.xml"
 	for %%b in (%FilesToDelete%) do (
 		echo [+] Cleaning file  : %%b 
 		del /q %%b >NUL
